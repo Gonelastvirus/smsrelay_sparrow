@@ -3,25 +3,16 @@ import requests
 
 app = Flask(__name__)
 
-SPARROW_TOKEN = 'v2_3NbaPLXQ9Arh2kMSlQj89MExZ7i.0yRc'
-FROM = 'Demo'
-TO = '9845141603'
+@app.route('/relay_sms', methods=['POST'])
+def relay_sms():
+    required_fields = ['token', 'from', 'to', 'text']
+    
+    # Validate required fields
+    if not all(field in request.form for field in required_fields):
+        return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
 
-@app.route('/send_sms', methods=['GET', 'POST'])
-def send_sms():
-    msg = request.args.get('msg') if request.method == 'GET' else request.form.get('msg')
-
-    if not msg:
-        return jsonify({'status': 'error', 'message': 'Missing msg parameter'}), 400
-
-    payload = {
-        'token': SPARROW_TOKEN,
-        'from': FROM,
-        'to': TO,
-        'text': msg
-    }
-
-    response = requests.post('https://api.sparrowsms.com/v2/sms/', data=payload)
+    # Forward to SparrowSMS
+    response = requests.post('https://api.sparrowsms.com/v2/sms/', data=request.form)
 
     try:
         response_json = response.json()
@@ -30,7 +21,5 @@ def send_sms():
 
     return jsonify({'status': 'success', 'response': response_json}), response.status_code
 
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
