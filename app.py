@@ -5,14 +5,14 @@ app = Flask(__name__)
 
 @app.route('/relay_sms', methods=['POST'])
 def relay_sms():
-    required_fields = ['token', 'from', 'to', 'text']
+    required_fields = ['auth_token', 'from', 'text']
     
     # Validate required fields
     if not all(field in request.form for field in required_fields):
         return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
 
     # Forward to SparrowSMS
-    response = requests.post('https://api.sparrowsms.com/v2/sms/', data=request.form)
+    response = requests.post('https://sms.aakashsms.com/sms/v3/send', data=request.form)
 
     try:
         response_json = response.json()
