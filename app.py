@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route('/relay_sms', methods=['POST'])
 def relay_sms():
-    required_fields = ['auth_token', 'from', 'text']
+    required_fields = ['auth_token', 'to', 'text']
     
     # Validate required fields
     if not all(field in request.form for field in required_fields):
